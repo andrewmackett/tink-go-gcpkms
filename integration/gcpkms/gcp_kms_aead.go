@@ -67,15 +67,13 @@ func (a *gcpAEAD) Encrypt(plaintext, associatedData []byte) ([]byte, error) {
 		AdditionalAuthenticatedDataCrc32C: wrapperspb.Int64(int64(associatedDataCRC32C)),
 	}
 
-	// This should be the request context, right?
 	ctx := context.Background()
-
 	resp, err := a.kms.Encrypt(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	// perform integrity verification on result.
+	// Perform integrity verification on result.
 	if !resp.VerifiedPlaintextCrc32C {
 		return nil, errors.New("Encrypt: request corrupted in-transit")
 	}
@@ -113,15 +111,13 @@ func (a *gcpAEAD) Decrypt(ciphertext, associatedData []byte) ([]byte, error) {
 		AdditionalAuthenticatedDataCrc32C: wrapperspb.Int64(int64(associatedDataCRC32C)),
 	}
 
-	// This should be the request context, right?
 	ctx := context.Background()
-
 	resp, err := a.kms.Decrypt(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	// perform integrity verification on result.
+	// Perform integrity verification on result.
 	if int64(crc32c(resp.Plaintext)) != resp.PlaintextCrc32C.Value {
 		return nil, errors.New("Decrypt: response corrupted in-transit")
 	}

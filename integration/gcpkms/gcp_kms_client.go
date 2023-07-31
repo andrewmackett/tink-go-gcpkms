@@ -37,7 +37,6 @@ const (
 )
 
 var (
-	// errCred       = errors.New("invalid credential path")
 	tinkUserAgent = "Tink/" + tink.Version + " Golang/" + runtime.Version()
 )
 
